@@ -2,6 +2,9 @@
 
 The objective of your chapter is to write a data-driven/research-based answer/blog post to this big question: “What is the state of web capabilities in 2020?”
 
+HTTPS, Security and Privacy
+Progressive Enhancement / feature Detection
+
 https://github.com/HTTPArchive/almanac.httparchive.org/wiki/Authors'-Guide#writing-the-chapter
 
 https://developers.google.com/style/highlights
@@ -64,11 +67,11 @@ Special emphasis on security and privacy
 Most APIs require the website to be sent over a secure connection (HTTPS).
 Some of them require a user gesture, such as a click or key press, to prevent fraud (ads).
 
-In this chapter, we'll have a look at different modern web APIs and the state of web capabilities in 2020. 
+In this chapter, we'll have a look at different modern web APIs, and the state of web capabilities in 2020. 
 
 ## Web Share API
 
-The [Web Share API](https://web.dev/web-share/) allows you to share content with other applications installed on the system.
+The [Web Share API](https://web.dev/web-share/) allows you to share content with other applications installed on the system using the native share dialog.
 
 ## Sharing Text and URLs
 
@@ -77,7 +80,17 @@ The [Web Share API](https://web.dev/web-share/) allows you to share content with
 ```
 
 With Level 1 of Web Share API, web apps can share a title, text, and a URL with other applications.
-Safari and Chromium forks on Android currently support this API.
+Chromium forks on Android and Safari currently support this API.
+Using Web Share API is as easy as calling the `share()` method on the `navigator` object.
+This method takes an object with a title, text, or a URL to share; at least one option must be given. (TODO: True?)
+Next, the native share window will open.
+You can await the result of the operation.
+
+```
+await navigator.share({ title: 'Test', text: 'Web Almanac 2020' });
+```
+
+(TODO: Usage)
 
 ## Sharing Files
 
@@ -86,13 +99,28 @@ Safari and Chromium forks on Android currently support this API.
 ```
 
 Level 2 of Web Share API additionally allows you to share files as well.
-Chromium forks currently support this API on Android, Safari is expected to add support with the release of iOS 14.
+Chromium forks currently support this API on Android, Safari is adding support with the release of iOS 14. (TODO: True?)
+Level 2 adds a new method called `canShare()` on the `navigator` object.
+With the help of this method, you can check if the user agent supports sharing certain content.
+Also, you can feature detect support for Level 2 by checking for the existence of the `canShare()` method.
+If the content can be shared, you simply add it to the `files` array of the options object, like so: (TODO: more code?)
 
-With the help of Web Share Target API, web applications installed to the system can receive data from other applications.
+```
+await navigator.share({ files: [myFile1] });
+```
+
+(TODO: Usage)
+
+To receive data shared from other applications, web apps can implement the [Web Share Target API](https://web.dev/web-share-target/).
+This API allows installed web applications to register with the operating system as a share target.
+The web application appears in the native share dialog, and can receive content shared from other apps.
 
 ## Clipboard Access
 
-This is im
+With the help of the `document.execCommand()` method, websites could already access with the user's clipboard.
+However, this approach is somewhat restricted, as the API is synchronous, and it can only interact with selected text in the DOM.
+This is where the [Async Clipboard API](https://web.dev/async-clipboard/) comes in.
+The new API is not only asynchronous, meaning it doesn't block the page for large chunks of data, but also allows for images to be copied to or pasted from the clipboard in supported browsers.
 
 ### Read Access
 
@@ -100,44 +128,106 @@ This is im
 (🐡 Launched) Async Clipboard Read
 ```
 
+The Async Clipboard API provides two methods for reading content from the clipboard:
+A shorthand method for plain text, called `navigator.clipboard.readText()`, and a method for arbitrary data, called `navigator.clipboard.read()`.
+Currently, most browsers only support PNG images (TODO: True?).
+Due to privacy reasons, reading from the clipboard always requires the user's consent.
+
+(TODO: Analyze data)
+
 ### Write Access
 
 ```
 (🐡 Launched) Async Clipboard Write
 ```
 
+On the other hand, the Async Clipboard API offers two methods for writing content to the clipboard.
+Again, there's a shorthand method for plain text, called `navigator.clipboard.writeText()`, and one for arbitrary data called `navigator.clipboard.write()`.
+In Chrome, writing to the clipboard while the browsing context is active (i.e., tab is open or window) does not require permission.
+Trying to write to the clipboard when the website is in the background does, however.
+
+(TODO: Analyze data)
+
+With the Raw Clipboard Access API, the Async Clipboard API should be further enhanced by allowing arbitrary data to be copied from or pasted to the clipboard. (TODO: More Info)
 
 ## File System Access
 
-One of the key features for productivity apps such das IDEs or Office-style applications is file system access.
-These kind of applications can 
-
+```
 (🧪 Origin trial) Native File System
+```
+
+One of the key features for productivity applications such as IDEs, image editors, or office apps is file system access.
+With `input[type=file]` and `a[download]`, the web already has mechanisms to read files from the file system and save them back to the Downloads folder.
+The aforementioned applications typically allow you to open single files or a folder, make some changes, and overwrite them in place.
+The Native File System API enables you to read and write files from the local file system, open directories and enumerate their contents in a secure and privacy-conserving manner.
+
+To do so, the API introduces a new asynchronous method on the global `window` object called `chooseFileSystemEntries()`.
+This method takes an `options` object that can be used to specify the operation (save/read), kind (file/directory), or file extensions.
+After calling this method, the browser will show a dialog box where the user has to select the target file or directory from.
+For security reasons, not all directories can be selected, such as system folders or directories containing sensitive data.
+
+(TODO: Analyze data)
+
+The availability of Native File System API could bring a lot of applications and experiences to the web that currently need to be shipped in a native wrapper such as Electron. (TODO: Slack, VS Code, Skype as examples?)
 
 ## Contact Picker
 
-The Contact Picker API allows a secure access to contacts on the system without requesting the entire address book.
-
+```
 (🐡 Launched) Contact Picker
+```
+
+The [Contact Picker API](https://web.dev/contact-picker/) allows you to access single contacts on the user's system.
+It does not allow you to request the entire address book or to check numbers against your contacts though.
+Comparable to the Native File System API, a dialog box will appear first, where the user has to pick the contact they want to share with the website.
+
+The Contact Picker API introduces a new `ContactManager` interface on the `navigator` object.
+Calling `navigator.contacts.select()` returns a promise and opens the contact picker.
+This method takes two arguments:
+First, an array of contact information the website wants to access, such as `name`, `email`, `tel`, `address`, or `icon`.
+As a second argument, the method takes an `options` object which can be used to request multiple contacts by setting the `multiple` property to `true`.
+When the user selects contacts and decides to share them with the website, the promise will resolve and return the contact information back to the website.
+
+(TODO: Analyze)
 
 ## Storage
 
-The _Storage Estimation API_ allows you to estimate
+Web browsers allow you to store data on the user's system in different ways, such as Cookies, in the Indexed Database (IndexedDB), the Service Worker's Cache Storage or Web Storage (Local Storage, Session Storage).
+In modern browsers, you can easily store hundreds of megabytes and even more depending on the browser.
+When browsers run out of space, they can clear data until the system is no longer over the limit, which can lead to data loss.
+
+Thanks to the [StorageManager API](https://web.dev/storage-for-the-web/#check-available), browsers no longer behave like a black box in that regard:
+This API allows you to estimate the remaining space available, and to opt-in to persistent storage, meaning that the browser will not clear your website's data when disk space is low.
+Therefore, the API introduces a new `StorageManager` interface on the `navigator` object.
 
 ### Estimate the available storage
 
+```
 (🐡 Launched) Storage Estimation
+```
 
-### Opt-in to persistant storage
+You can have the browser estimate the available storage by calling `navigator.storage.estimate()`.
+This method returns a promise resolving to an object with two properties:
+`usage` shows the number of bytes used by the application and `quota` contains the maximum number of bytes available.
+
+(TODO: Analyze)
+
+### Opt-in to persistent storage
 
 ```
 (🐡 Launched) Persistent Storage
 ```
 
-Browsers can evict storage when the device is low on disk space.
-For instance, Chromium forks on Android remove storage from the least recently used origins.
-When dealing with structured data entered by the user, this poses a risk of data loss.
-Cache eviction
+There are two categories of web storage: "Best Effort" and "Persistent", with the first being the default.
+When a device is low on storage, the browser automatically tries to free up best effort storage.
+For instance, Firefox and Chromium-based browsers evict storage from the least recently used origins.
+This however poses a risk of losing critical data.
+To prevent eviction, you can opt for persistent storage.
+In this case, the browser will not clear the storage, even when space is low.
+Users can still choose to clear up the storage manually.
+To opt for persistent storage, you call the `navigator.storage.persist()` method.
+Depending on the browser and site engagement, a permission prompt may show, or the request will be automatically accepted or denied.
+
+(TODO: Analyze)
 
 ## Notifications
 
@@ -231,20 +321,27 @@ When an application was closed, it cannot communicate
 
 In some scenarios, developers still want to synchronize data on a more or less regular basis, for instance, by …
 
+```
 (🐡 Launched) Periodic Background Sync Register
 (🐡 Launched) Periodic Background Sync
+```
 
 ## Integration with native app stores
+
+```
 (🐡 Launched) Get Installed Related Apps
+```
 
 ## Devices
 
 TODO: These APIs require a user gesture and probably cannot be evaluated.
 
+```
 (🐡 Launched) Web USB
 (🐡 Launched) Web Bluetooth
 (🐡 Launched) Web MIDI
 (🧪 Origin trial) Web Serial
+```
 
 ## Web NFC
 
@@ -268,7 +365,7 @@ TODO: These APIs require a user gesture and probably cannot be evaluated.
 
 ## Shape Detection
 
-The Shape Detection API allows you to detect barcodes, faces, or text in images.
+The [Shape Detection API](https://web.dev/shape-detection/) allows you to detect barcodes, faces, or text in images.
 
 ### Detecting barcodes
 
@@ -276,18 +373,23 @@ The Shape Detection API allows you to detect barcodes, faces, or text in images.
 (🐡 Launched) Shape Detection (Barcode)
 ```
 
+`BarcodeDetector`
+
 ### Detecting faces
 
 ```
 (🚩 Behind flag) Shape Detection (Face)
 ```
 
+`FaceDetector`
+
 ### Detecting text
 
 ```
 (🚩 Behind flag) Shape Detection (Text)
-
 ```
+
+`TextDetector`
 
 ## Transport
 ```
@@ -296,3 +398,9 @@ The Shape Detection API allows you to detect barcodes, faces, or text in images.
 ```
 
 ## Conclusion
+
+The state of web capabilities 2020 is… (TODO)
+
+- security
+- privacy
+- developer interaction
