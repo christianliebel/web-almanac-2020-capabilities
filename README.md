@@ -51,17 +51,18 @@ https://developers.google.com/style/highlights
 
 ## Introduction
 
-The web platform as advanced to an application platform.
+The web platform has advanced to an application platform.
 With the appearance of HTML5, web applications 
-cross-platform
+cross-platform 😎TODO
 
-However, there is still a gap between the capabilities of native applications and web apps, the so called web app gap.
-With the Web Capabilities project also known as Project Fugu, the Chromium contributors try to close the web app gap by evaluating, specifying, and implementing APIs in browsers with native power.
+However, there is still a gap between the capabilities of native applications and web apps, the so called app gap.
+With the Web Capabilities project, also known as Project Fugu, the Chromium contributors try to close the app gap by evaluating, specifying, and implementing APIs in browsers with native power.
 
 [Progressive Web Apps](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) have
-Technical foundations such as Service Workers, the Web App Manifest, and IndexedDB. 
+technical foundations such as Service Workers, the Web App Manifest, and IndexedDB. 
 Applications can run offline.
 However, web applications can only call native functionality
+😎TODO
 
 Special emphasis on security and privacy
 Most APIs require the website to be sent over a secure connection (HTTPS).
@@ -79,8 +80,8 @@ The [Web Share API](https://web.dev/web-share/) allows you to share content with
 (🐡 Launched) Web Share (No Files)
 ```
 
-With Level 1 of Web Share API, web apps can share a title, text, and a URL with other applications.
-Chromium forks on Android and Safari currently support this API.
+With Level&nbsp;1 of the Web Share API, web apps can share a title, text, and a URL with other applications.
+Chromium forks on Android and Safari currently also support this API.
 Using Web Share API is as easy as calling the `share()` method on the `navigator` object.
 This method takes an object with a title, text, or a URL to share; at least one option must be given. (TODO: True?)
 Next, the native share window will open.
@@ -98,11 +99,12 @@ await navigator.share({ title: 'Test', text: 'Web Almanac 2020' });
 (🐡 Launched) Web Share (Containing Files)
 ```
 
-Level 2 of Web Share API additionally allows you to share files as well.
-Chromium forks currently support this API on Android, Safari is adding support with the release of iOS 14. (TODO: True?)
-Level 2 adds a new method called `canShare()` on the `navigator` object.
+Level&nbsp;2 of the Web Share API additionally allows you to share files.
+Chromium forks currently support this API on Android.
+Safari is adding support with the release of iOS&nbsp;14. (TODO: True?)
+Level&nbsp;2 adds a new method called `canShare()` on the `navigator` object.
 With the help of this method, you can check if the user agent supports sharing certain content.
-Also, you can feature detect support for Level 2 by checking for the existence of the `canShare()` method.
+Also, you can feature-detect support for Level&nbsp;2 by checking for the existence of the `canShare()` method.
 If the content can be shared, you simply add it to the `files` array of the options object, like so: (TODO: more code?)
 
 ```
@@ -118,7 +120,7 @@ The web application appears in the native share dialog, and can receive content 
 ## Clipboard Access
 
 With the help of the `document.execCommand()` method, websites could already access with the user's clipboard.
-However, this approach is somewhat restricted, as the API is synchronous, and it can only interact with selected text in the DOM.
+However, this approach is somewhat restricted, as the API is synchronous (😎TODO: this is mostly a problem with re-encoding of large images to prevent image bombs), and it can only interact with selected text in the DOM.
 This is where the [Async Clipboard API](https://web.dev/async-clipboard/) comes in.
 The new API is not only asynchronous, meaning it doesn't block the page for large chunks of data, but also allows for images to be copied to or pasted from the clipboard in supported browsers.
 
@@ -141,9 +143,9 @@ Due to privacy reasons, reading from the clipboard always requires the user's co
 (🐡 Launched) Async Clipboard Write
 ```
 
-On the other hand, the Async Clipboard API offers two methods for writing content to the clipboard.
+Apart from reading operations, the Async Clipboard API also offers two methods for writing content to the clipboard.
 Again, there's a shorthand method for plain text, called `navigator.clipboard.writeText()`, and one for arbitrary data called `navigator.clipboard.write()`.
-In Chrome, writing to the clipboard while the browsing context is active (i.e., tab is open or window) does not require permission.
+In Chrome, writing to the clipboard while the browsing context is active (i.e., tab is open or window 😎TODO) does not require permission.
 Trying to write to the clipboard when the website is in the background does, however.
 
 (TODO: Analyze data)
@@ -162,6 +164,7 @@ The aforementioned applications typically allow you to open single files or a fo
 The Native File System API enables you to read and write files from the local file system, open directories and enumerate their contents in a secure and privacy-conserving manner.
 
 To do so, the API introduces a new asynchronous method on the global `window` object called `chooseFileSystemEntries()`.
+(😎TODO: this has been replaced by three separate methods https://github.com/WICG/native-file-system/blob/master/changes.md)
 This method takes an `options` object that can be used to specify the operation (save/read), kind (file/directory), or file extensions.
 After calling this method, the browser will show a dialog box where the user has to select the target file or directory from.
 For security reasons, not all directories can be selected, such as system folders or directories containing sensitive data.
@@ -176,9 +179,9 @@ The availability of Native File System API could bring a lot of applications and
 (🐡 Launched) Contact Picker
 ```
 
-The [Contact Picker API](https://web.dev/contact-picker/) allows you to access single contacts on the user's system.
+The [Contact Picker API](https://web.dev/contact-picker/) allows you to access single or multiple contacts from the address book of a user's device.
 It does not allow you to request the entire address book or to check numbers against your contacts though.
-Comparable to the Native File System API, a dialog box will appear first, where the user has to pick the contact they want to share with the website.
+Comparable to the Native File System API, a picker will appear first, where the user has to select the contact they want to share with the website.
 
 The Contact Picker API introduces a new `ContactManager` interface on the `navigator` object.
 Calling `navigator.contacts.select()` returns a promise and opens the contact picker.
