@@ -223,22 +223,22 @@ This method returns a promise resolving to an object with two properties:
 There are two categories of web storage: "Best Effort" and "Persistent", with the first being the default.
 When a device is low on storage, the browser automatically tries to free up best effort storage.
 For instance, Firefox and Chromium-based browsers evict storage from the least recently used origins.
-This however poses a risk of losing critical data.
+This, however, poses a risk of losing critical data.
 To prevent eviction, you can opt for persistent storage.
 In this case, the browser will not clear the storage, even when space is low.
 Users can still choose to clear up the storage manually.
 To opt for persistent storage, you call the `navigator.storage.persist()` method.
-Depending on the browser and site engagement, a permission prompt may show, or the request will be automatically accepted or denied.
+Depending on the browser and site engagement, a permission prompt may show, or the request will automatically be accepted or denied.
 
 (TODO: Analyze)
 
 ## Notifications
 
-With the help of the Push and Notifications API, web applications have long been able to receive push messages and display notification banners.
+With the help of the Push and Notifications APIs, web applications have long been able to receive push messages and display notification banners.
 However, some parts are missing:
-Up until now, push messages had to be sent via the server; they cannot be scheduled offline.
-Also, web applications installed to the system cannot show badges on their icon.
-The Badging and Notification Triggers API want to enable both scenarios.
+Up until now, push messages had to be sent via the server; they could not be scheduled offline.
+Also, web applications installed to the system could not show badges on their icon.
+The Badging and Notification Triggers APIs enable both scenarios.
 
 ### Badging
 
@@ -248,7 +248,7 @@ The Badging and Notification Triggers API want to enable both scenarios.
 ```
 
 On several platforms, it's common for applications to present a badge on the application's icon indicating the amount of open actions:
-For instance, the badge could show the number of unread emails, notifications or to-do items to complete.
+For instance, the badge could show the number of unread emails, notifications, or to-do items to complete.
 The [Badging API](https://web.dev/badging-api/) allows your installed web application to show such a badge on its icon.
 By calling `navigator.setAppBadge()`, you can set the badge.
 This method takes a number to be shown on the application's badge.
@@ -267,10 +267,11 @@ Badging API is a great choice for email clients, social media apps, or messenger
 ```
 
 The Push API requires the user to be online to receive a notification.
-Some applications, such as games, calendar or alarm applications, could also determine the target date for a notification locally and schedule it.
+Some applications, such as games, reminder or ToDo apps, calendars, or alarm clocks, could also determine the target date for a notification locally and schedule it.
 To allow this feature, the Chrome team experimented with a new API called [Notification Triggers](https://web.dev/notification-triggers/).
 This API adds a new property called `showTrigger` to the `options` map that can be passed to the `showNotification()` method on the service worker's registration.
-The API would allow for different kinds of triggers.
+The API is designed to allow for different kinds of triggers in the future,
+albeit for now, only time-based triggers are implemented.
 For scheduling a notification based on a certain date and time, you can create a new instance of a `TimestampTrigger` and pass the target timestamp to it:
 
 ```js
@@ -282,7 +283,7 @@ registration.showNotification('Title', {
 
 (TODO: analyze data)
 
-Due to lack of developer interest, the Chrome team decided to pause the further development of Notification Triggers in July 2020.
+Due to the lack of robust feedback, the Chrome team decided to temporarily pause further development of Notification Triggers in July 2020.
 
 ## Wake Lock API
 
@@ -290,8 +291,8 @@ Due to lack of developer interest, the Chrome team decided to pause the further 
 (🐡 Launched) Screen Wake Lock
 ```
 
-To save energy, mobile devices darken the screen backlight and eventually turn of the device's display, which makes sense in most cases.
-There are scenarios however, where the user may want the application to not turn off the display, for instance, when reading a recipe while cooking with dirty hands.
+To save energy, mobile devices darken the screen backlight and eventually turn off the device's display, which makes sense in most cases.
+However, there are scenarios where the user may want the application to explicitly keep the display awake, for instance, when reading a recipe while cooking.
 
 In a [Wake Lock API case study on BettyCrocker.com](https://web.dev/betty-crocker/), the purchase intent indicators increased by about 300 percent. (TODO: More)
 
@@ -320,7 +321,7 @@ Text fragments help readers to identify the relevant parts
 
 ## Periodic Background Sync
 
-When an application was closed, it cannot communicate
+When an application was closed, it cannot communicate 😎TODO
 
 In some scenarios, developers still want to synchronize data on a more or less regular basis, for instance, by …
 
