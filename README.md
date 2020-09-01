@@ -362,7 +362,24 @@ Now the promise resolves, and you can find the OTP on the `code` property of the
 (🐡 Launched) Text Fragment
 ```
 
-[Text Fragments](https://web.dev/text-fragments/) help readers to identify the relevant parts 
+URLs are the web's technical measure to link to documents.
+With the help of hash anchors, you can even deep-link to certain sections within the document (e.g., `#summary`), if you assigned those sections a matching ID.
+However, you could not link to arbitrary passages within a document—until now.
+[Text Fragments](https://web.dev/text-fragments/) help readers to identify the relevant parts in a document.
+For example, to directly skip to the answer for a specific question.
+
+To do so, you simply add `#:~:text=` to a URL, followed by the text you want to highlight, encoded as a URI component.
+Currently, only Chromium-based browsers support this mechanism.
+These browsers will find the selected text on the website, and highlight it with a yellow background color.
+To highlight a single word, simply append it (e.g., `#:~:text=Start`).
+You can also highlight an entire sentence or paragraph by adding the expected end text, separated by a comma (`#:~:text=Start,End`).
+Where this isn't enough, you can add a prefix and suffix to narrow down the relevant text even further:
+The full syntax for text fragments is `#:~:text=[prefix-,]textStart[,textEnd][,-suffix]`.
+
+(TODO: Image?)
+(TODO: Analyze data)
+
+The Google search makes use of this mechanism to guide the user to the relevant part on the website based on the search query.
 
 ## Periodic Background Sync
 
