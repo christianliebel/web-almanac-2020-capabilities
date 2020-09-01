@@ -272,7 +272,7 @@ Badging API is a great choice for email clients, social media apps, or messenger
 The Push API requires the user to be online to receive a notification.
 Some applications, such as games, reminder or ToDo apps, calendars, or alarm clocks, could also determine the target date for a notification locally and schedule it.
 To allow this feature, the Chrome team experimented with a new API called [Notification Triggers](https://web.dev/notification-triggers/).
-This API adds a new property called `showTrigger` to the `options` map that can be passed to the `showNotification()` method on the service worker's registration.
+This API adds a new property called `showTrigger` to the `options` map that can be passed to the `showNotification()` method on the Service Worker's registration.
 The API is designed to allow for different kinds of triggers in the future,
 albeit for now, only time-based triggers are implemented.
 For scheduling a notification based on a certain date and time, you can create a new instance of a `TimestampTrigger` and pass the target timestamp to it:
