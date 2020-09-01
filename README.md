@@ -314,7 +314,25 @@ In a [Wake Lock API case study on BettyCrocker.com](https://web.dev/betty-crocke
 (🧪 Origin trial) Idle Detection
 ```
 
-[Idle Detection API](https://web.dev/idle-detection/)
+Some applications need to determine if the user is actively using a device or if they are idle.
+For instance, chat applications may display that the user is absent
+There are various factors that can be taken into account, such as a lack of interaction with the screen, mouse, or keyboard.
+The [Idle Detection API](https://web.dev/idle-detection/) provides an abstract API that allows you to check if either the user or screen is idle given a certain threshold.
+
+To do so, the API provides a new `IdleDetector` interface on the global `window` object.
+Before you can use this functionality, you have to request permission by calling `IdleDetector.requestPermission()` first.
+If the user grants the permission, you can create a new instance of `IdleDetector`.
+This object provides two properties, `userState` and `screenState` containing the respective idle states.
+It will raise a `change` event when either the user's, or the screen's idle state change.
+Finally, the idle detector needs to be started by calling its `start()` method.
+The method takes a configuration object with two parameters:
+A `threshold` defining the time in milliseconds that the user has to be idle.
+The minimum threshold is 60,000 milliseconds (one minute).
+Optionally, you can pass an AbortSignal to the `abort` property, which you can use to abort idle detection later on.
+
+(TODO: analyze data)
+
+At the time of this writing, the Idle Detection API is under origin trial, so its API shape may change in the future.
 
 ## Web OTP
 
