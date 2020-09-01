@@ -291,12 +291,22 @@ Due to the lack of robust feedback, the Chrome team decided to temporarily pause
 (🐡 Launched) Screen Wake Lock
 ```
 
-[Wake Lock API](https://web.dev/wakelock/)
-
 To save energy, mobile devices darken the screen backlight and eventually turn off the device's display, which makes sense in most cases.
-However, there are scenarios where the user may want the application to explicitly keep the display awake, for instance, when reading a recipe while cooking.
+However, there are scenarios where the user may want the application to explicitly keep the display awake, for instance, when reading a recipe while cooking or watching a presentation.
+The [Wake Lock API](https://web.dev/wakelock/) solves this problem by providing you a mechanism to keep the screen on.
 
-In a [Wake Lock API case study on BettyCrocker.com](https://web.dev/betty-crocker/), the purchase intent indicators increased by about 300 percent. (TODO: More)
+To obtain a wake lock, you call the `navigator.wakeLock.request()` method.
+This method takes a WakeLockType parameter. 
+In the future, the Wake Lock API could provide other lock types, such as turning the screen off, but keeping the CPU on.
+For now, the API only supports screen locks, so you need to pass the argument `'screen'` to the method.
+The method returns a promise that resolves to a WakeLockSentinel object.
+To release the screen wake lock later on, you call the `release()` method on this object, so you need to make sure to store the reference.
+The browser will automatically release the lock when the tab is inactive, or the user minimizes the window.
+Also, the browser may deny your request and reject the promise, for example due to low battery.
+
+(TODO: analyze data)
+
+In a [Wake Lock API case study on BettyCrocker.com](https://web.dev/betty-crocker/), a popular cooking website in the US, the purchase intent indicators increased by about 300 percent. This shows… (TODO: More)
 
 ## Idle Detection API
 
