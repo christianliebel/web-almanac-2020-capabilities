@@ -2,14 +2,11 @@
 
 The objective of your chapter is to write a data-driven/research-based answer/blog post to this big question: “What is the state of web capabilities in 2020?”
 
-HTTPS, Security and Privacy
-Progressive Enhancement / feature Detection
+[Author's Guide](https://github.com/HTTPArchive/almanac.httparchive.org/wiki/Authors'-Guide#writing-the-chapter) ::
+[Google Style Guide](https://developers.google.com/style/highlights) ::
+[Results](https://docs.google.com/spreadsheets/d/1N6j1qKv7vc51p1W9z_RrbJX9Se3Pmb-Uersfz4gWqqs/edit#gid=2077755325)
 
-https://github.com/HTTPArchive/almanac.httparchive.org/wiki/Authors'-Guide#writing-the-chapter
-
-https://developers.google.com/style/highlights
-
-https://docs.google.com/spreadsheets/d/1N6j1qKv7vc51p1W9z_RrbJX9Se3Pmb-Uersfz4gWqqs/edit#gid=2077755325
+---
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -17,8 +14,8 @@ https://docs.google.com/spreadsheets/d/1N6j1qKv7vc51p1W9z_RrbJX9Se3Pmb-Uersfz4gW
 
 - [Introduction](#introduction)
 - [Web Share API](#web-share-api)
-- [Sharing Text and URLs](#sharing-text-and-urls)
-- [Sharing Files](#sharing-files)
+  - [Sharing Text and URLs](#sharing-text-and-urls)
+  - [Sharing Files](#sharing-files)
 - [Clipboard Access](#clipboard-access)
   - [Read Access](#read-access)
   - [Write Access](#write-access)
@@ -67,7 +64,9 @@ Applications can run offline.
 However, web applications can only call native functionality
 😎TODO
 
-Special emphasis on security and privacy
+Progressive Enhancement / feature Detection 😎TODO
+
+Special emphasis on security and privacy 😎TODO
 Most APIs require the website to be sent over a secure connection (HTTPS).
 Some of them require a user gesture, such as a click or key press, to prevent fraud (ads).
 
@@ -77,7 +76,7 @@ In this chapter, we'll have a look at different modern web APIs, and the state o
 
 The [Web Share API](https://web.dev/web-share/) allows you to share content with other applications installed on the system using the native share dialog.
 
-## Sharing Text and URLs
+### Sharing Text and URLs
 
 ```
 (🐡 Launched) Web Share (No Files)
@@ -94,9 +93,9 @@ You can await the result of the operation.
 await navigator.share({ title: 'Test', text: 'Web Almanac 2020' });
 ```
 
-(TODO: Usage)
+(TODO: Analyze data)
 
-## Sharing Files
+### Sharing Files
 
 ```
 (🐡 Launched) Web Share (Containing Files)
@@ -114,7 +113,7 @@ If the content can be shared, you simply add it to the `files` array of the opti
 await navigator.share({ files: [myFile1] });
 ```
 
-(TODO: Usage)
+(TODO: Analyze data)
 
 To receive data shared from other applications, web apps can implement the [Web Share Target API](https://web.dev/web-share-target/).
 This API allows installed web applications to register with the operating system as a share target.
@@ -442,11 +441,26 @@ TODO: Too long?
 (🐡 Launched) Get Installed Related Apps
 ```
 
-[gIRA](https://web.dev/get-installed-related-apps/)
+Progressive Web Apps are a great application model.
+However, in some cases, it may still make sense to offer a separate native application:
+For example, if the app needs to use features that are not available on the web, or based on the experience of the team.
+When the user already has your native app installed, you might not want to send notifications twice or promote the installation of your PWA.
+
+To detect if the user has already your native application or PWA on the system, you can use the [getInstalledRelatedApps() method](https://web.dev/get-installed-related-apps/) on the `navigator` object.
+This method is currently provided by Chromium-based browsers and works for both Android and Universal Windows Platform (UWP) apps.
+You need to adjust the native app bundles to refer to your website, and you need to add information about your native apps to the Web App Manifest of your PWA.
+Calling the `getInstalledRelatedApps()` method will then return the list of your apps installed on the user's device:
+
+```
+const relatedApps = await navigator.getInstalledRelatedApps();
+relatedApps.forEach((app) => {
+  console.log(app.id, app.platform, app.url);
+});
+```
+
+(TODO: Analyze data)
 
 ## Devices
-
-> TODO: These APIs require a user gesture and probably cannot be evaluated.
 
 ```
 (🐡 Launched) Web USB
@@ -455,9 +469,34 @@ TODO: Too long?
 (🧪 Origin trial) Web Serial
 ```
 
+> TODO: These APIs require a user gesture and probably cannot be evaluated.
+
 ## Web NFC
 
-[Web NFC](https://web.dev/nfc/)
+The [Web NFC](https://web.dev/nfc/) API allows you to access the NFC interface of the user's device from your web application.
+Web NFC supports writing to and reading from NFC tags via the NFC Data Exchange Format (NDEF).
+For security reasons, the API does not support low-level operations or other NFC communication modes.
+
+### Writing NFC tags
+
+```
+(🧪 Origin trial) Web NFC (Write)
+```
+
+To write data to NFC tags, the Web NFC API introduces a new interface called `NDEFWriter`.
+First of all, you need to create a new instance of the writer.
+The instance provides a `write()` method that takes either a string, for writing simple text, or a dictionary, in case you want to write a different record.
+Writing text to an NFC tag is as easy as follows:
+
+```
+const writer = new NDEFWriter();
+await writer.write('Hello world!');
+```
+
+The browser will present a permission prompt to the user, if they didn't grant your application the permission to access NFC devices before.
+If the operation was successful, the promise returned by `write()` resolves, otherwise, it will be rejected.
+
+(TODO: Analyze data)
 
 ### Reading NFC tags
 
@@ -465,11 +504,20 @@ TODO: Too long?
 (🧪 Origin trial) Web NFC (Read)
 ```
 
-### Writing NFC tags
+For reading data from NFC tags, the Web NFC API introduces a new interface called `NDEFReader`.
+To use it, you also have to create a new instance of the reader.
+Next, you have to put the NFC reader into scan mode by calling the `scan()` method.
+When an NFC tag is read, the `onreading` event is fired, containing the `serialNumber` of the device and the NDEF `message` stored in the tag:
 
 ```
-(🧪 Origin trial) Web NFC (Write)
+const reader = new NDEFReader();
+await reader.scan();
+reader.onreading = (event) => {
+  console.log('Message read', event);
+};
 ```
+
+(TODO: Analyze data)
 
 ## Content Indexing
 
@@ -478,6 +526,8 @@ TODO: Too long?
 ```
 
 The [Content Indexing API](https://web.dev/content-indexing-api/) …
+
+(TODO: Analyze data)
 
 ## Shape Detection
 
@@ -508,10 +558,17 @@ The [Shape Detection API](https://web.dev/shape-detection/) allows you to detect
 `TextDetector`
 
 ## Transport
+
 ```
 (🧪 Origin trial) WebSocketStream
 (🧪 Origin trial) QuicTransport
 ```
+
+Finally, there are two new transport methods that are currently in origin trial.
+
+The [WebSocketStream](https://web.dev/websocketstream/) API wants to bring…
+
+[QuicTransport](https://web.dev/quictransport/)…
 
 ## Conclusion
 
@@ -520,3 +577,4 @@ The state of web capabilities 2020 is… (TODO)
 - security
 - privacy
 - developer interaction
+- browser support
