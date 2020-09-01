@@ -340,10 +340,21 @@ At the time of this writing, the Idle Detection API is under origin trial, so it
 (🐡 Launched) Web OTP
 ```
 
-[Web OTP API](https://web.dev/sms-receiver-api-announcement/)
+For verifying a user's phone number or two-factor authentication (TFA or 2FA), services often send a text message containing a one-time password (OTP) to the user's device.
+To enter the OTP, users may have to switch to the Messages app, copy the OTP, switch back to the website, and then paste the code into a text field—a tedious task.
+To improve this experience, the operating system can share a one-time password with the browser.
+This is where the [Web OTP API](https://web.dev/web-otp/) comes in.
 
-For Two-Factor Authentication (TFA or 2FA), services often send a text message to the user's device. 
-To improve the experience, the operating system can share the one-time password with the browser, so the user doesn't have to switch apps and copy-paste the OTP.
+To obtain an OTP from a text message, you have to call the `navigator.credentials.get()` method and pass the following configuration object to it: `{ otp: { transport: ['sms'] }}`.
+This method returns a promise that will eventually resolve to an `OTPCredential` object containing the OTP.
+After that, you can invoke the delivery of the text message on the server.
+Make sure to format the text message as follows:
+The host part of the website's URL must be preceded by an at sign (`@`), and the OTP must be preceded by a pound sign (`#`), e.g. `@www.example.com #12345`.
+You may add additional text to the message for the user.
+When the device receives a matching text message, the user has to confirm to share the code with the website.
+Now the promise resolves, and you can find the OTP on the `code` property of the resulting object.
+
+(TODO: analyze data)
 
 ## Text Fragments
 
