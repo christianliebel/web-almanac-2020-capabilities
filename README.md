@@ -291,6 +291,8 @@ Due to the lack of robust feedback, the Chrome team decided to temporarily pause
 (🐡 Launched) Screen Wake Lock
 ```
 
+[Wake Lock API](https://web.dev/wakelock/)
+
 To save energy, mobile devices darken the screen backlight and eventually turn off the device's display, which makes sense in most cases.
 However, there are scenarios where the user may want the application to explicitly keep the display awake, for instance, when reading a recipe while cooking.
 
@@ -302,24 +304,30 @@ In a [Wake Lock API case study on BettyCrocker.com](https://web.dev/betty-crocke
 (🧪 Origin trial) Idle Detection
 ```
 
+[Idle Detection API](https://web.dev/idle-detection/)
+
 ## Web OTP
 
 ```
 (🐡 Launched) Web OTP
 ```
 
+[Web OTP API](https://web.dev/sms-receiver-api-announcement/)
+
 For Two-Factor Authentication (TFA or 2FA), services often send a text message to the user's device. 
 To improve the experience, the operating system can share the one-time password with the browser, so the user doesn't have to switch apps and copy-paste the OTP.
 
-## Text Fragment
-
-Text fragments help readers to identify the relevant parts 
+## Text Fragments
 
 ```
 (🐡 Launched) Text Fragment
 ```
 
+[Text Fragments](https://web.dev/text-fragments/) help readers to identify the relevant parts 
+
 ## Periodic Background Sync
+
+[Periodic Background Sync](https://web.dev/periodic-background-sync/)
 
 When an application was closed, it cannot communicate 😎TODO
 
@@ -336,9 +344,11 @@ In some scenarios, developers still want to synchronize data on a more or less r
 (🐡 Launched) Get Installed Related Apps
 ```
 
+[gIRA](https://web.dev/get-installed-related-apps/)
+
 ## Devices
 
-TODO: These APIs require a user gesture and probably cannot be evaluated.
+> TODO: These APIs require a user gesture and probably cannot be evaluated.
 
 ```
 (🐡 Launched) Web USB
@@ -348,6 +358,8 @@ TODO: These APIs require a user gesture and probably cannot be evaluated.
 ```
 
 ## Web NFC
+
+[Web NFC](https://web.dev/nfc/)
 
 ### Reading NFC tags
 
@@ -366,6 +378,8 @@ TODO: These APIs require a user gesture and probably cannot be evaluated.
 ```
 (🧪 Origin trial) Content Indexing
 ```
+
+The [Content Indexing API](https://web.dev/content-indexing-api/) …
 
 ## Shape Detection
 
