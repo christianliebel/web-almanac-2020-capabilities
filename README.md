@@ -384,16 +384,55 @@ The Google search makes use of this mechanism to guide the user to the relevant 
 
 ## Periodic Background Sync
 
-[Periodic Background Sync](https://web.dev/periodic-background-sync/)
-
-When an application was closed, it cannot communicate 😎TODO
-
-In some scenarios, developers still want to synchronize data on a more or less regular basis, for instance, by …
-
 ```
 (🐡 Launched) Periodic Background Sync Register
 (🐡 Launched) Periodic Background Sync
 ```
+
+When the user closes a web application, it cannot communicate with its backend service anymore.
+In some cases, you might still want to synchronize data on a more or less regular basis, just as native applications can.
+For instance, news applications might want to download the latest headlines before the user wakes up.
+The [Periodic Background Sync API](https://web.dev/periodic-background-sync/) wants to bridge this gap between web and native.
+
+### Register for periodic sync
+
+Periodic background sync relies on Service Workers—a piece of JavaScript registered by a web application, that can run even when the app is closed.
+As other capabilities, this API requires permission first.
+The API implements a new interface called `PeriodicSyncManager`.
+If present, you can access an instance of this interface on the Service Worker's registration.
+To synchronize data in the background, the application has to register first, by calling `periodicSync.register()` on the registration.
+This method takes two parameters:
+A tag, which is an arbitrary string to recognize the registration again later on.
+The second one is a configuration object that takes a `minInterval` property.
+This property defines the minimum interval in milliseconds, the browser ultimately decides how often it will invoke background synchronization:
+
+```
+registration.periodicSync.register('articles', {
+  minInterval: 24 * 60 * 60 * 1000 // one day
+});
+```
+
+### Respond to a periodic sync interval
+
+For each tick of the interval, and if the device is online, the browser triggers the Service Worker's `periodicsync` event.
+Then, the Service Worker script can perform the necessary steps to synchronize the data:
+
+```
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'articles') {
+    event.waitUntil(syncStuff());
+  }
+});
+```
+
+(TODO: analyze data)
+
+At the time of this writing, only Chromium-based browsers implement this API.
+On these browsers, the application has to be installed (i.e., added to the homescreen) first, before the API can be used.
+The site engagement score of the website defines if and how often periodic sync events can be invoked.
+In the best case, websites can sync content once a day.
+
+TODO: Too long?
 
 ## Integration with native app stores
 
