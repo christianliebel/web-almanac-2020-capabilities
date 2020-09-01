@@ -9,6 +9,7 @@ https://github.com/HTTPArchive/almanac.httparchive.org/wiki/Authors'-Guide#writi
 
 https://developers.google.com/style/highlights
 
+https://docs.google.com/spreadsheets/d/1N6j1qKv7vc51p1W9z_RrbJX9Se3Pmb-Uersfz4gWqqs/edit#gid=2077755325
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
