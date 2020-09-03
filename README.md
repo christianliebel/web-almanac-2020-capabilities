@@ -525,7 +525,19 @@ reader.onreading = (event) => {
 (🧪 Origin trial) Content Indexing
 ```
 
-The [Content Indexing API](https://web.dev/content-indexing-api/) …
+Web apps can store content offline using various ways, such as the Cache Storage, or IndexedDB.
+However, for users it's hard to discover which content is available offline.
+The [Content Indexing API](https://web.dev/content-indexing-api/) allows you to display your content more prominently.
+Currently, this API is only supported by Chrome on Android.
+This browser shows a list of "Articles for you" in the Downloads menu.
+Content indexed via the Content Indexing API will appear there.
+
+The Content Indexing API extends the Service Worker API by providing a new `ContentIndex` interface.
+This interface is available via the `index` property of the Service Worker's registration.
+The `add()` method allows you to add content to the index:
+Each piece of content must have an ID, a URL, a launch URL, title, description and a set of icons.
+Optionally, the content can be grouped into different categories, such as articles, homepages, or videos.
+The `delete()` method allows you to remove content from the index again, and the `getAll()` method returns a list of all indexed entries.
 
 (TODO: Analyze data)
 
