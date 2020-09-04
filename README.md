@@ -37,14 +37,16 @@ The objective of your chapter is to write a data-driven/research-based answer/bl
 - [Integration with native app stores](#integration-with-native-app-stores)
 - [Devices](#devices)
 - [Web NFC](#web-nfc)
-  - [Reading NFC tags](#reading-nfc-tags)
   - [Writing NFC tags](#writing-nfc-tags)
+  - [Reading NFC tags](#reading-nfc-tags)
 - [Content Indexing](#content-indexing)
 - [Shape Detection](#shape-detection)
   - [Detecting barcodes](#detecting-barcodes)
   - [Detecting faces](#detecting-faces)
   - [Detecting text](#detecting-text)
 - [Transport](#transport)
+  - [Backpressure for WebSockets](#backpressure-for-websockets)
+  - [Make it QUIC](#make-it-quic)
 - [Conclusion](#conclusion)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -67,13 +69,16 @@ However, web applications can only call native functionality
 
 Progressive Enhancement / feature Detection 😎TODO
 
-Links to specs? 😎TODO
-
 Special emphasis on security and privacy 😎TODO
 Most APIs require the website to be sent over a secure connection (HTTPS).
 Some of them require a user gesture, such as a click or key press, to prevent fraud (ads).
 
 In this chapter, we'll have a look at different modern web APIs, and the state of web capabilities in 2020. 
+
+TODO OVERALL:
+Links to specs? 😎TODO
+Nicer headlines? 😎TODO
+Use cases? 😎TODO
 
 ## Web Share API
 
@@ -623,10 +628,46 @@ As text detection is rather unstable across platforms, it is currently not part 
 ```
 
 Finally, there are two new transport methods that are currently in origin trial.
+The first one allows you to receive high-frequency messages with WebSockets, while the second one introduces an entirely new bidirectional communication protocol apart from HTTP and WebSockets.
 
-The [WebSocketStream](https://web.dev/websocketstream/) API wants to bring…
+### Backpressure for WebSockets
 
-[QuicTransport](https://web.dev/quictransport/)…
+The WebSocket API is a great choice for bidirectional communication between your website and your server.
+However, the WebSocket API does not allow for backpressure, so applications dealing with high-frequency messages may freeze.
+The [WebSocketStream](https://web.dev/websocketstream/) API wants to bring easy-to-use backpressure support to the WebSocket API by extending it with streams.
+Instead of using the usual `WebSocket` constructor, you need to create a new instance of the `WebSocketStream` interface.
+The `connection` property of the stream returns a promise that resolves to a readable and writable stream that allow you to obtain a stream reader or writer, respectively:
+
+```
+const wss = new WebSocketStream(WSS_URL);
+const {readable, writable} = await wss.connection;
+const reader = readable.getReader();
+const writer = writable.getWriter();
+```
+
+The WebSocketStream API transparently solves backpressure for you, as the stream readers and writers will only proceed if its safe to do so.
+
+(TODO: Analyze)
+
+### Make it QUIC
+
+[QUIC](https://www.chromium.org/quic) is a multiplexed, stream-based, bidirectional transport protocol implemented on UDP.
+It's an alternative to HTTP/WebSocket APIs that are implemented on TCP.
+The [QuicTransport API](https://web.dev/quictransport/) is the client-side API for sending messages to and receiving messages from a QUIC server.
+You can choose to send data unreliably via datagrams, or reliably by using its streams API:
+
+```
+const transport = new QuicTransport(QUIC_URL);
+await transport.ready;
+
+const ws = transport.sendDatagrams();
+const stream = await transport.createSendStream();
+```
+
+QuicTransport is a great alternative to WebSockets, as it supports the use cases from the WebSocket API, and adds support for scenarios where minimal latency is more important than reliability and message order.
+This makes it a great choice for games and applications dealing with high-frequency events.
+
+(TODO: Analyze)
 
 ## Conclusion
 
