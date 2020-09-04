@@ -54,6 +54,7 @@ The objective of your chapter is to write a data-driven/research-based answer/bl
 The web platform has advanced to an application platform.
 With the appearance of HTML5, web applications 
 cross-platform 😎TODO
+spec status 😎TODO
 
 However, there is still a gap between the capabilities of native applications and web apps, the so called app gap.
 With the Web Capabilities project, also known as Project Fugu, the Chromium contributors try to close the app gap by evaluating, specifying, and implementing APIs in browsers with native power.
@@ -65,6 +66,8 @@ However, web applications can only call native functionality
 😎TODO
 
 Progressive Enhancement / feature Detection 😎TODO
+
+Links to specs? 😎TODO
 
 Special emphasis on security and privacy 😎TODO
 Most APIs require the website to be sent over a secure connection (HTTPS).
@@ -543,7 +546,10 @@ The `delete()` method allows you to remove content from the index again, and the
 
 ## Shape Detection
 
-The [Shape Detection API](https://web.dev/shape-detection/) allows you to detect barcodes, faces, or text in images.
+The modern web allows you to capture images or live video streams from webcams or device cameras.
+For processing this image data, developers currently need to rely on third-party JavaScript or WebAssembly libraries.
+However, operating systems typically provide hardware-accelerated APIs to detect shapes like barcodes, faces, or text in images.
+The [Shape Detection API](https://web.dev/shape-detection/) allows you to use these platform-specific interfaces by offering abstract and similar APIs.
 
 ### Detecting barcodes
 
@@ -551,7 +557,21 @@ The [Shape Detection API](https://web.dev/shape-detection/) allows you to detect
 (🐡 Launched) Shape Detection (Barcode)
 ```
 
-`BarcodeDetector`
+To detect barcode in images, the Shape Detection API introduces the new interface `BarcodeDetector`.
+You need to create a new instance of the detector.
+The constructor optionally takes a configuration object that allows you to specify the barcode types to look for.
+The `detect()` method returns a promise containing the barcodes found, including their position in the image, the barcode format, and the encoded value.
+
+```
+const barcodeDetector = new BarcodeDetector();
+const barcodes = await barcodeDetector.detect(image);
+barcodes.forEach(barcode => searchInProductDatabase(barcode.rawValue));
+```
+
+(TODO: Analyze)
+
+This API is already shipped in Chromium browsers since version 83.
+If the underlying operating system supports barcode detection, those browsers will enable the API automatically.
 
 ### Detecting faces
 
@@ -559,7 +579,20 @@ The [Shape Detection API](https://web.dev/shape-detection/) allows you to detect
 (🚩 Behind flag) Shape Detection (Face)
 ```
 
-`FaceDetector`
+The new interface `FaceDetector` allows you to detect faces in images.
+Again, you simply need to create a new instance of it.
+The detector's constructor also takes an optional configuration object allowing you to specify the maximum number of faces to detect, and if fast mode should be turned on (which prefers speed to accuracy).
+The `detect()` method returns a promise which resolves to the positions of faces found, optionally even providing landmarks (such as the position of the nose).
+
+```
+const faceDetector = new FaceDetector();
+const faces = await faceDetector.detect(image);
+faces.forEach(face => tagPersonInImage(face.boundingBox));
+```
+
+(TODO: Analyze)
+
+At the time of this writing, face detection is available behind a flag.
 
 ### Detecting text
 
@@ -567,7 +600,20 @@ The [Shape Detection API](https://web.dev/shape-detection/) allows you to detect
 (🚩 Behind flag) Shape Detection (Text)
 ```
 
-`TextDetector`
+Last but not least, the new interface `TextDetector` allows you to detect text in images.
+To use it, you need to create a new instance of it.
+The `detect()` method returns a promise which resolves to the position of detected texts, and their raw values.
+
+```
+const textDetector = new TextDetector();
+const texts = await textDetector.detect(image);
+texts.forEach(text => readAloud(text.rawValue));
+```
+
+(TODO: Analyze)
+
+At the time of this writing, text detection is available behind a flag in Chromium-based browsers.
+As text detection is rather unstable across platforms, it is currently not part of the Shape Detection specification draft, but a separate draft report instead.
 
 ## Transport
 
