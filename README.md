@@ -4,7 +4,8 @@ The objective of your chapter is to write a data-driven/research-based answer/bl
 
 [Author's Guide](https://github.com/HTTPArchive/almanac.httparchive.org/wiki/Authors'-Guide#writing-the-chapter) ::
 [Google Style Guide](https://developers.google.com/style/highlights) ::
-[Results](https://docs.google.com/spreadsheets/d/1N6j1qKv7vc51p1W9z_RrbJX9Se3Pmb-Uersfz4gWqqs/edit#gid=2077755325)
+[Results](https://docs.google.com/spreadsheets/d/1N6j1qKv7vc51p1W9z_RrbJX9Se3Pmb-Uersfz4gWqqs/edit#gid=2077755325) ::
+[Data Viz Gallery (Template)](https://docs.google.com/spreadsheets/d/1OtE2wqjGOMy7pRi3uorK7ITVDJXAVoP-r69k8eeKzeU/edit?ts=5f5e8838#gid=0)
 
 ---
 
