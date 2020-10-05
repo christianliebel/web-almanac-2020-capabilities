@@ -81,53 +81,6 @@ Links to specs? 😎TODO
 Nicer headlines? 😎TODO
 Use cases? 😎TODO
 
-## Web Share API
-
-The [Web Share API](https://web.dev/web-share/) allows you to share content with other applications installed on the system using the native share dialog.
-
-### Sharing Text and URLs
-
-```
-(🐡 Launched) Web Share (No Files)
-```
-
-With Level&nbsp;1 of the Web Share API, web apps can share a title, text, and a URL with other applications.
-Chromium forks on Android and Safari currently also support this API.
-Using Web Share API is as easy as calling the `share()` method on the `navigator` object.
-This method takes an object with a title, text, or a URL to share; at least one option must be given. (TODO: True?)
-Next, the native share window will open.
-You can await the result of the operation.
-
-```
-await navigator.share({ title: 'Test', text: 'Web Almanac 2020' });
-```
-
-(TODO: Analyze data)
-
-### Sharing Files
-
-```
-(🐡 Launched) Web Share (Containing Files)
-```
-
-Level&nbsp;2 of the Web Share API additionally allows you to share files.
-Chromium forks currently support this API on Android.
-Safari is adding support with the release of iOS&nbsp;14. (TODO: True?)
-Level&nbsp;2 adds a new method called `canShare()` on the `navigator` object.
-With the help of this method, you can check if the user agent supports sharing certain content.
-Also, you can feature-detect support for Level&nbsp;2 by checking for the existence of the `canShare()` method.
-If the content can be shared, you simply add it to the `files` array of the options object, like so: (TODO: more code?)
-
-```
-await navigator.share({ files: [myFile1] });
-```
-
-(TODO: Analyze data)
-
-To receive data shared from other applications, web apps can implement the [Web Share Target API](https://web.dev/web-share-target/).
-This API allows installed web applications to register with the operating system as a share target.
-The web application appears in the native share dialog, and can receive content shared from other apps.
-
 ## Clipboard Access
 
 With the help of the `document.execCommand()` method, websites could already access with the user's clipboard.
@@ -162,46 +115,6 @@ Trying to write to the clipboard when the website is in the background does, how
 (TODO: Analyze data)
 
 With the Raw Clipboard Access API, the Async Clipboard API should be further enhanced by allowing arbitrary data to be copied from or pasted to the clipboard. (TODO: More Info)
-
-## File System Access
-
-```
-(🧪 Origin trial) Native File System
-```
-
-One of the key features for productivity applications such as IDEs, image editors, or office apps is file system access.
-With `input[type=file]` and `a[download]`, the web already has mechanisms to read files from the file system and save them back to the Downloads folder.
-The aforementioned applications typically allow you to open single files or a folder, make some changes, and overwrite them in place.
-The Native File System API enables you to read and write files from the local file system, open directories and enumerate their contents in a secure and privacy-conserving manner.
-
-To do so, the API introduces a new asynchronous method on the global `window` object called `chooseFileSystemEntries()`.
-(😎TODO: this has been replaced by three separate methods https://github.com/WICG/native-file-system/blob/master/changes.md)
-This method takes an `options` object that can be used to specify the operation (save/read), kind (file/directory), or file extensions.
-After calling this method, the browser will show a dialog box where the user has to select the target file or directory from.
-For security reasons, not all directories can be selected, such as system folders or directories containing sensitive data.
-
-(TODO: Analyze data)
-
-The availability of Native File System API could bring a lot of applications and experiences to the web that currently need to be shipped in a native wrapper such as Electron. (TODO: Slack, VS Code, Skype as examples?)
-
-## Contact Picker
-
-```
-(🐡 Launched) Contact Picker
-```
-
-The [Contact Picker API](https://web.dev/contact-picker/) allows you to access single or multiple contacts from the address book of a user's device.
-It does not allow you to request the entire address book or to check numbers against your contacts though.
-Comparable to the Native File System API, a picker will appear first, where the user has to select the contact they want to share with the website.
-
-The Contact Picker API introduces a new `ContactManager` interface on the `navigator` object.
-Calling `navigator.contacts.select()` returns a promise and opens the contact picker.
-This method takes two arguments:
-First, an array of contact information the website wants to access, such as `name`, `email`, `tel`, `address`, or `icon`.
-As a second argument, the method takes an `options` object which can be used to request multiple contacts by setting the `multiple` property to `true`.
-When the user selects contacts and decides to share them with the website, the promise will resolve and return the contact information back to the website.
-
-(TODO: Analyze)
 
 ## Storage
 
@@ -345,53 +258,6 @@ Optionally, you can pass an AbortSignal to the `abort` property, which you can u
 
 At the time of this writing, the Idle Detection API is under origin trial, so its API shape may change in the future.
 
-## Web OTP
-
-```
-(🐡 Launched) Web OTP
-```
-
-For verifying a user's phone number or two-factor authentication (TFA or 2FA), services often send a text message containing a one-time password (OTP) to the user's device.
-To enter the OTP, users may have to switch to the Messages app, copy the OTP, switch back to the website, and then paste the code into a text field—a tedious task.
-To improve this experience, the operating system can share a one-time password with the browser.
-This is where the [Web OTP API](https://web.dev/web-otp/) comes in.
-
-To obtain an OTP from a text message, you have to call the `navigator.credentials.get()` method and pass the following configuration object to it: `{ otp: { transport: ['sms'] }}`.
-This method returns a promise that will eventually resolve to an `OTPCredential` object containing the OTP.
-After that, you can invoke the delivery of the text message on the server.
-Make sure to format the text message as follows:
-The host part of the website's URL must be preceded by an at sign (`@`), and the OTP must be preceded by a pound sign (`#`), e.g. `@www.example.com #12345`.
-You may add additional text to the message for the user.
-When the device receives a matching text message, the user has to confirm to share the code with the website.
-Now the promise resolves, and you can find the OTP on the `code` property of the resulting object.
-
-(TODO: analyze data)
-
-## Text Fragments
-
-```
-(🐡 Launched) Text Fragment
-```
-
-URLs are the web's technical measure to link to documents.
-With the help of hash anchors, you can even deep-link to certain sections within the document (e.g., `#summary`), if you assigned those sections a matching ID.
-However, you could not link to arbitrary passages within a document—until now.
-[Text Fragments](https://web.dev/text-fragments/) help readers to identify the relevant parts in a document.
-For example, to directly skip to the answer for a specific question.
-
-To do so, you simply add `#:~:text=` to a URL, followed by the text you want to highlight, encoded as a URI component.
-Currently, only Chromium-based browsers support this mechanism.
-These browsers will find the selected text on the website, and highlight it with a yellow background color.
-To highlight a single word, simply append it (e.g., `#:~:text=Start`).
-You can also highlight an entire sentence or paragraph by adding the expected end text, separated by a comma (`#:~:text=Start,End`).
-Where this isn't enough, you can add a prefix and suffix to narrow down the relevant text even further:
-The full syntax for text fragments is `#:~:text=[prefix-,]textStart[,textEnd][,-suffix]`.
-
-(TODO: Image?)
-(TODO: Analyze data)
-
-The Google search makes use of this mechanism to guide the user to the relevant part on the website based on the search query.
-
 ## Periodic Background Sync
 
 ```
@@ -465,65 +331,6 @@ const relatedApps = await navigator.getInstalledRelatedApps();
 relatedApps.forEach((app) => {
   console.log(app.id, app.platform, app.url);
 });
-```
-
-(TODO: Analyze data)
-
-## Devices
-
-```
-(🐡 Launched) Web USB
-(🐡 Launched) Web Bluetooth
-(🐡 Launched) Web MIDI
-(🧪 Origin trial) Web Serial
-```
-
-> TODO: These APIs require a user gesture and probably cannot be evaluated.
-
-## Web NFC
-
-The [Web NFC](https://web.dev/nfc/) API allows you to access the NFC interface of the user's device from your web application.
-Web NFC supports writing to and reading from NFC tags via the NFC Data Exchange Format (NDEF).
-For security reasons, the API does not support low-level operations or other NFC communication modes.
-
-### Writing NFC tags
-
-```
-(🧪 Origin trial) Web NFC (Write)
-```
-
-To write data to NFC tags, the Web NFC API introduces a new interface called `NDEFWriter`.
-First of all, you need to create a new instance of the writer.
-The instance provides a `write()` method that takes either a string, for writing simple text, or a dictionary, in case you want to write a different record.
-Writing text to an NFC tag is as easy as follows:
-
-```
-const writer = new NDEFWriter();
-await writer.write('Hello world!');
-```
-
-The browser will present a permission prompt to the user, if they didn't grant your application the permission to access NFC devices before.
-If the operation was successful, the promise returned by `write()` resolves, otherwise, it will be rejected.
-
-(TODO: Analyze data)
-
-### Reading NFC tags
-
-```
-(🧪 Origin trial) Web NFC (Read)
-```
-
-For reading data from NFC tags, the Web NFC API introduces a new interface called `NDEFReader`.
-To use it, you also have to create a new instance of the reader.
-Next, you have to put the NFC reader into scan mode by calling the `scan()` method.
-When an NFC tag is read, the `onreading` event is fired, containing the `serialNumber` of the device and the NDEF `message` stored in the tag:
-
-```
-const reader = new NDEFReader();
-await reader.scan();
-reader.onreading = (event) => {
-  console.log('Message read', event);
-};
 ```
 
 (TODO: Analyze data)
