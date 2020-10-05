@@ -75,10 +75,6 @@ The new API is not only asynchronous, meaning it doesn't block the page for larg
 
 ### Read Access
 
-```
-(🐡 Launched) Async Clipboard Read
-```
-
 The Async Clipboard API provides two methods for reading content from the clipboard:
 A shorthand method for plain text, called `navigator.clipboard.readText()`, and a method for arbitrary data, called `navigator.clipboard.read()`.
 Currently, most browsers only support PNG images (TODO: True?).
@@ -87,10 +83,6 @@ Due to privacy reasons, reading from the clipboard always requires the user's co
 (TODO: Analyze data)
 
 ### Write Access
-
-```
-(🐡 Launched) Async Clipboard Write
-```
 
 Apart from reading operations, the Async Clipboard API also offers two methods for writing content to the clipboard.
 Again, there's a shorthand method for plain text, called `navigator.clipboard.writeText()`, and one for arbitrary data called `navigator.clipboard.write()`.
@@ -113,10 +105,6 @@ Therefore, the API introduces a new `StorageManager` interface on the `navigator
 
 ### Estimate the available storage
 
-```
-(🐡 Launched) Storage Estimation
-```
-
 You can have the browser estimate the available storage by calling `navigator.storage.estimate()`.
 This method returns a promise resolving to an object with two properties:
 `usage` shows the number of bytes used by the application and `quota` contains the maximum number of bytes available.
@@ -124,10 +112,6 @@ This method returns a promise resolving to an object with two properties:
 (TODO: Analyze)
 
 ### Opt-in to persistent storage
-
-```
-(🐡 Launched) Persistent Storage
-```
 
 There are two categories of web storage: "Best Effort" and "Persistent", with the first being the default.
 When a device is low on storage, the browser automatically tries to free up best effort storage.
@@ -196,10 +180,6 @@ Due to the lack of robust feedback, the Chrome team decided to temporarily pause
 
 ## Wake Lock API
 
-```
-(🐡 Launched) Screen Wake Lock
-```
-
 To save energy, mobile devices darken the screen backlight and eventually turn off the device's display, which makes sense in most cases.
 However, there are scenarios where the user may want the application to explicitly keep the display awake, for instance, when reading a recipe while cooking or watching a presentation.
 The [Wake Lock API](https://web.dev/wakelock/) solves this problem by providing you a mechanism to keep the screen on.
@@ -218,10 +198,6 @@ Also, the browser may deny your request and reject the promise, for example due 
 In a [Wake Lock API case study on BettyCrocker.com](https://web.dev/betty-crocker/), a popular cooking website in the US, the purchase intent indicators increased by about 300 percent. This shows… (TODO: More)
 
 ## Idle Detection API
-
-```
-(🧪 Origin trial) Idle Detection
-```
 
 Some applications need to determine if the user is actively using a device or if they are idle.
 For instance, chat applications may display that the user is absent
@@ -244,11 +220,6 @@ Optionally, you can pass an AbortSignal to the `abort` property, which you can u
 At the time of this writing, the Idle Detection API is under origin trial, so its API shape may change in the future.
 
 ## Periodic Background Sync
-
-```
-(🐡 Launched) Periodic Background Sync Register
-(🐡 Launched) Periodic Background Sync
-```
 
 When the user closes a web application, it cannot communicate with its backend service anymore.
 In some cases, you might still want to synchronize data on a more or less regular basis, just as native applications can.
@@ -297,10 +268,6 @@ TODO: Too long?
 
 ## Integration with native app stores
 
-```
-(🐡 Launched) Get Installed Related Apps
-```
-
 Progressive Web Apps are a great application model.
 However, in some cases, it may still make sense to offer a separate native application:
 For example, if the app needs to use features that are not available on the web, or based on the experience of the team.
@@ -321,10 +288,6 @@ relatedApps.forEach((app) => {
 (TODO: Analyze data)
 
 ## Content Indexing
-
-```
-(🧪 Origin trial) Content Indexing
-```
 
 Web apps can store content offline using various ways, such as the Cache Storage, or IndexedDB.
 However, for users it's hard to discover which content is available offline.
