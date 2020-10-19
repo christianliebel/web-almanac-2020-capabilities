@@ -39,27 +39,42 @@ The objective of your chapter is to write a data-driven/research-based answer/bl
 
 ## Introduction
 
-The web platform has advanced to an application platform.
-With the appearance of HTML5, web applications 
-cross-platform 😎TODO
-spec status 😎TODO
+The Web Capabilities Project, also known as Project Fugu, is a cross-company effort by Google, Microsoft and Intel to close the gap between native applications and web apps.
+To do so, the Chromium contributors implement new APIs exposing capabilities of the operating system to the web, while maintaining user security, privacy and trust.
 
-However, there is still a gap between the capabilities of native applications and web apps, the so called app gap.
-With the Web Capabilities project, also known as Project Fugu, the Chromium contributors try to close the app gap by evaluating, specifying, and implementing APIs in browsers with native power.
+The World Wide Web was invented in 1989 to make it easier to exchange scientific documents.
+Over the years, the web has advanced to become an application platform.
+With HTML5 at the latest, the web platform introduced more and more APIs allowing websites to leverage native capabilities, such as geolocation access or offline storage.
+Today the Web is the ideal platform for developing cross-platform applications.
+The desktop clients of the most famous instant messengers and code editors rely on web technology.
+However, these clients need wrappers to talk to the interfaces of the underlying operating system.
 
-[Progressive Web Apps](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) have
-technical foundations such as Service Workers, the Web App Manifest, and IndexedDB. 
-Applications can run offline.
-However, web applications can only call native functionality
-😎TODO
+Enter [Progressive Web Apps](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps).
+Introduced at around 2016, PWAs are web-based applications that run directly in your browser.
+They are offline-capable and can be installed on the user's device if the user so desires.
+The Web App Manifest, Service Workers and IndexedDB form the technological foundation for this application model.
+However, there is still a gap between the capabilities of native applications and web apps like this, the so called app gap.
+With the Web Capabilities project, also known as Project Fugu, the Chromium contributors try to close the app gap by evaluating, specifying, and implementing new powerful APIs in browsers.
 
-Progressive Enhancement / feature Detection 😎TODO
+These capabilities include:
+- [File System Access API](https://web.dev/file-system-access/) for accessing files on the local file system
+- [Async Clipboard API](https://web.dev/async-clipboard/) to access the user's clipboard
+- [Web Share API](https://web.dev/web-share/) for sharing files with other applications
+- [Contact Picker API](https://web.dev/contact-picker/) to access contacts from the user's address book
+- [Shape Detection API](https://web.dev/shape-detection/) for efficient detection of faces or barcodes in images
+- [Web NFC](https://web.dev/nfc/), [Web Serial](https://web.dev/serial/), Web USB, Web Bluetooth and other APIs
 
-Special emphasis on security and privacy 😎TODO
-Most APIs require the website to be sent over a secure connection (HTTPS).
-Some of them require a user gesture, such as a click or key press, to prevent fraud (ads).
+The Chromium contributors discuss all APIs with other developers and browser vendors through the appropriate standards bodies.
+Also, they pay special attention to the implications on security and privacy introduced by those capabilities.
+Most interfaces require the website to be sent over a secure connection (HTTPS).
+Some of them require a user gesture, such as a click or key press, to prevent fraud, other capabilities require explicit permission by the user.
+Developers can use all APIs in a backwards-compatible manner.
+By feature detecting the APIs, applications won't break in browsers lacking support for those capabilities.
+In browsers that implement them, users can get a better user experience.
 
-In this chapter, we'll have a look at different modern web APIs, and the state of web capabilities in 2020. 
+This chapter gives an overview of various modern web APIs, and the state of web capabilities in 2020.
+Due to technical limitations, the HTTP Archive only has data available for APIs that require neither permission nor a user gesture.
+Unless otherwise noted, the interfaces are only available in Chromium-based browsers, and their specifications are in the early stages of standardisation.
 
 TODO OVERALL:
 Links to specs? 😎TODO
@@ -68,16 +83,16 @@ Use cases? 😎TODO
 
 ## Clipboard Access
 
-With the help of the `document.execCommand()` method, websites could already access with the user's clipboard.
-However, this approach is somewhat restricted, as the API is synchronous (😎TODO: this is mostly a problem with re-encoding of large images to prevent image bombs), and it can only interact with selected text in the DOM.
-This is where the [Async Clipboard API](https://web.dev/async-clipboard/) comes in.
-The new API is not only asynchronous, meaning it doesn't block the page for large chunks of data, but also allows for images to be copied to or pasted from the clipboard in supported browsers.
+With the help of the `document.execCommand()` method, websites could already access the user's clipboard.
+However, this approach is somewhat restricted, as the API is synchronous (making it difficult to process clipboard items), and it can only interact with selected text in the DOM.
+This is where the [Async Clipboard API](https://web.dev/async-clipboard/) ([W3C Working Draft](https://www.w3.org/TR/clipboard-apis/#async-clipboard-api)) comes in.
+This new API is not only asynchronous, meaning it doesn't block the page for large chunks of data, but also allows for images to be copied to or pasted from the clipboard in supported browsers such as Chrome, Edge and Safari.
 
 ### Read Access
 
 The Async Clipboard API provides two methods for reading content from the clipboard:
 A shorthand method for plain text, called `navigator.clipboard.readText()`, and a method for arbitrary data, called `navigator.clipboard.read()`.
-Currently, most browsers only support PNG images (TODO: True?).
+Currently, most browsers only support PNG images.
 Due to privacy reasons, reading from the clipboard always requires the user's consent.
 
 (TODO: Analyze data)
@@ -88,8 +103,7 @@ Apart from reading operations, the Async Clipboard API also offers two methods f
 Again, there's a shorthand method for plain text, called `navigator.clipboard.writeText()`, and one for arbitrary data called `navigator.clipboard.write()`.
 In Chrome, writing to the clipboard while the browsing context is active (i.e., tab is open or window 😎TODO) does not require permission.
 Trying to write to the clipboard when the website is in the background does, however.
-
-(TODO: Analyze data)
+As this method requires a user gesture and permission first, it's not covered by the HTTPArchive metrics.
 
 With the Raw Clipboard Access API, the Async Clipboard API should be further enhanced by allowing arbitrary data to be copied from or pasted to the clipboard. (TODO: More Info)
 
