@@ -41,21 +41,6 @@ The objective of your chapter is to write a data-driven/research-based answer/bl
 
 The Web Capabilities Project, also known as Project Fugu, is a cross-company effort by Google, Microsoft and Intel to close the gap between native applications and web apps.
 To do so, the Chromium contributors implement new APIs exposing capabilities of the operating system to the web, while maintaining user security, privacy and trust.
-
-The World Wide Web was invented in 1989 to make it easier to exchange scientific documents.
-Over the years, the web has advanced to become an application platform.
-With HTML5 at the latest, the web platform introduced more and more APIs allowing websites to leverage native capabilities, such as geolocation access or offline storage.
-Today the Web is the ideal platform for developing cross-platform applications.
-The desktop clients of the most famous instant messengers and code editors rely on web technology.
-However, these clients need wrappers to talk to the interfaces of the underlying operating system.
-
-Enter [Progressive Web Apps](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps).
-Introduced at around 2016, PWAs are web-based applications that run directly in your browser.
-They are offline-capable and can be installed on the user's device if the user so desires.
-The Web App Manifest, Service Workers and IndexedDB form the technological foundation for this application model.
-However, there is still a gap between the capabilities of native applications and web apps like this, the so called app gap.
-With the Web Capabilities project, also known as Project Fugu, the Chromium contributors try to close the app gap by evaluating, specifying, and implementing new powerful APIs in browsers.
-
 These capabilities include:
 - [File System Access API](https://web.dev/file-system-access/) for accessing files on the local file system
 - [Async Clipboard API](https://web.dev/async-clipboard/) to access the user's clipboard
@@ -66,7 +51,7 @@ These capabilities include:
 
 The Chromium contributors discuss all APIs with other developers and browser vendors through the appropriate standards bodies.
 Also, they pay special attention to the implications on security and privacy introduced by those capabilities.
-Most interfaces require the website to be sent over a secure connection (HTTPS).
+For instance, most interfaces require the website to be sent over a secure connection (HTTPS).
 Some of them require a user gesture, such as a click or key press, to prevent fraud, other capabilities require explicit permission by the user.
 Developers can use all APIs in a backwards-compatible manner.
 By feature detecting the APIs, applications won't break in browsers lacking support for those capabilities.
