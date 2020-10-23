@@ -43,6 +43,7 @@ The Web Capabilities Project, also known as Project Fugu, is a cross-company eff
 To do so, the Chromium contributors implement new APIs exposing capabilities of the operating system to the web, while maintaining user security, privacy and trust.
 These capabilities include:
 - [File System Access API](https://web.dev/file-system-access/) for accessing files on the local file system
+- [File Handling API](https://web.dev/file-handling/) for registering as a handler for certain file extensions
 - [Async Clipboard API](https://web.dev/async-clipboard/) to access the user's clipboard
 - [Web Share API](https://web.dev/web-share/) for sharing files with other applications
 - [Contact Picker API](https://web.dev/contact-picker/) to access contacts from the user's address book
@@ -69,9 +70,12 @@ By feature detecting the APIs, applications won't break in browsers lacking supp
 In browsers that support them, users can get a better user experience.
 This way, your web app [progressively enhances](https://web.dev/progressively-enhance-your-pwa/) according to the user's particular browser.
 
-This chapter gives an overview of various modern web APIs, and the state of web capabilities in 2020.
+This chapter gives an overview of various modern web APIs, and the state of web capabilities in 2020 based on usage data by the HTTP Archive.
 Due to technical limitations, the HTTP Archive only has data available for APIs that require neither permission, nor a user gesture.
-Unless otherwise noted, the interfaces are only available in Chromium-based browsers, and their specifications are in the early stages of standardisation.
+Where no data is available, the percentage of page loads in Google Chrome will be shown instead.
+Since some interfaces are brand-new and their usage is still very low, the statistics are not necessarily meaningful.
+However, in many cases trends can still be read from the data.
+Unless otherwise noted, the APIs are only available in Chromium-based browsers, and their specifications are in the early stages of standardisation.
 
 ## Async Clipboard API
 
@@ -84,10 +88,15 @@ This new API is not only asynchronous, meaning it doesn't block the page for lar
 
 The Async Clipboard API provides two methods for reading content from the clipboard:
 A shorthand method for plain text, called `navigator.clipboard.readText()`, and a method for arbitrary data, called `navigator.clipboard.read()`.
-Currently, most browsers only support PNG images.
+Currently, most browsers only support HTML content and PNG images as additional data formats.
 Due to privacy reasons, reading from the clipboard always requires the user's consent.
 
-(TODO: Analyze data) https://chromestatus.com/metrics/feature/timeline/popularity/2369 OK
+(IMAGE: Async Clipboard API)
+
+The Async Clipboard API is comparatively new, so its usage is currently rather low.
+In March 2020, Safari added support for the Async Clipboard API in Safari 13.1.
+Over the course of 2020, the usage of the `read()` API was growing.
+In October 2020, the API was called during 0.0003 percent of all page loads in Google Chrome.
 
 ### Write Access
 
@@ -96,10 +105,9 @@ Again, there's a shorthand method for plain text, called `navigator.clipboard.wr
 In Chromium-based browsers, writing to the clipboard while the tab is active does not require permission.
 Trying to write to the clipboard when the website is in the background does, however.
 As this method requires a user gesture and permission first, it's not covered by the HTTPArchive metrics.
+In contrast to the `read()` API, the `write()` method shows an exponential growth in usage, being part of 0.0006 percent of all page loads in October 2020.
 
-(TODO: Analyze data) https://chromestatus.com/metrics/feature/timeline/popularity/2370 OK
-
-In the future, Raw Clipboard Access, another Fugu API, might even further enhance the Async Clipboard API by allowing arbitrary data to be copied from or pasted to the clipboard.
+The Raw Clipboard Access API, another Fugu capability, might even further enhance the Async Clipboard API by allowing arbitrary data to be copied from or pasted to the clipboard.
 
 ## StorageManager API
 
@@ -117,7 +125,12 @@ You can have the browser estimate the available storage by calling `navigator.st
 This method returns a promise resolving to an object with two properties:
 `usage` shows the number of bytes used by the application and `quota` contains the maximum number of bytes available.
 
-(TODO: Analyze) OK
+(IMAGE: StorageManager API :: Estimate)
+
+The Storage Manager API is supported in Chrome since 2016, Firefox since 2017 and the new Chromium-based Edge.
+HTTPArchive data shows that the API is used in 0.36 percent of all desktop websites tracked by the archive, and 0.21 percent of all mobile websites.
+Over the course of 2020, the usage of the Storage Manager API kept growing.
+This also makes the interface the most used APIs presented in this chapter.
 
 ### Opt-in to persistent storage
 
@@ -131,7 +144,11 @@ Users can still choose to clear up the storage manually.
 To opt for persistent storage, you call the `navigator.storage.persist()` method.
 Depending on the browser and site engagement, a permission prompt may show, or the request will automatically be accepted or denied.
 
-(TODO: Analyze) OK
+(IMAGE: StorageManager API :: Persist)
+
+The `persist()` API is less often called then the `estimate()` method.
+Only about 0.003 percent of mobile websites make use of this API, compared to around 0.0005 percent of desktop websites.
+While usage on the desktop seems to remain at this low level, there is no clear trend on mobile devices.
 
 ## New Notification APIs
 
@@ -154,7 +171,12 @@ Calling `navigator.clearAppBadge()` removes the badge again.
 Badging API is a great choice for email clients, social media apps, or messengers.
 In 2019, Twitter took part in the Badging API's origin trial and displayed the number of unread notifications on the app's badge.
 
-(TODO: analyze data) https://chromestatus.com/metrics/feature/timeline/popularity/2726 OK
+(IMAGE: Badging API)
+
+In April 2020, Google Chrome 81 shipped the new Badging API, followed by Microsoft Edge 84 in July.
+After Chrome shipped the API, the usage numbers shot up.
+In October 2020, on 0.022 percent of all page loads in Google Chrome, the `setAppBadge()` method is called.
+The `clearAppBadge()` method is less often called, during around 0.014 percent if page loads.
 
 ### Notification Triggers API
 
@@ -162,8 +184,7 @@ The Push API requires the user to be online to receive a notification.
 Some applications, such as games, reminder or ToDo apps, calendars, or alarm clocks, could also determine the target date for a notification locally and schedule it.
 To support this feature, the Chrome team experiments with a new API called [Notification Triggers](https://web.dev/notification-triggers/) ([Explainer](https://github.com/beverloo/notification-triggers/blob/master/README.md), not on standards track yet).
 This API adds a new property called `showTrigger` to the `options` map that can be passed to the `showNotification()` method on the Service Worker's registration.
-The API is designed to allow for different kinds of triggers in the future,
-albeit for now, only time-based triggers are implemented.
+The API is designed to allow for different kinds of triggers in the future, albeit for now, only time-based triggers are implemented.
 For scheduling a notification based on a certain date and time, you can create a new instance of a `TimestampTrigger` and pass the target timestamp to it:
 
 ```js
@@ -173,13 +194,17 @@ registration.showNotification('Title', {
 });
 ```
 
-(TODO: analyze data) https://chromestatus.com/metrics/feature/timeline/popularity/3017 OK
+(IMAGE: Notification Triggers)
 
-## Wake Lock API
+The Fugu team experimented with Notification Triggers in an origin trial from Chrome 80 to 83, pausing development afterwards due to the lack of feedback by developers.
+Starting from Chrome 86 released in October 2020, the API has entered the origin trial phase again.
+This also explains the usage data of Notification Triggers API that peaked at being called on 0.000032 percent of page loads in Chrome during the first origin trial at around March 2020.
+
+## Screen Wake Lock API
 
 To save energy, mobile devices darken the screen backlight and eventually turn off the device's display, which makes sense in most cases.
 However, there are scenarios where the user may want the application to explicitly keep the display awake, for instance, when reading a recipe while cooking or watching a presentation.
-The [Wake Lock API](https://web.dev/wakelock/) ([W3C Working Draft](https://www.w3.org/TR/screen-wake-lock/)) solves this problem by providing you a mechanism to keep the screen on.
+The [Screen Wake Lock API](https://web.dev/wakelock/) ([W3C Working Draft](https://www.w3.org/TR/screen-wake-lock/)) solves this problem by providing you a mechanism to keep the screen on.
 
 To obtain a wake lock, you call the `navigator.wakeLock.request()` method.
 This method takes a WakeLockType parameter. 
@@ -190,9 +215,14 @@ To release the screen wake lock later on, you call the `release()` method on thi
 The browser will automatically release the lock when the tab is inactive, or the user minimizes the window.
 Also, the browser may deny your request and reject the promise, for example due to low battery.
 
-(TODO: analyze data) https://chromestatus.com/metrics/feature/timeline/popularity/3005 OK
+(IMAGE: Screen Wake Lock API)
 
-In a [Wake Lock API case study on BettyCrocker.com](https://web.dev/betty-crocker/), a popular cooking website in the US, the purchase intent indicators increased by about 300 percent. This shows… (TODO: More)
+BettyCrocker.com, a popular cooking website in the US, offered their users to prevent the screen from going dark while cooking with the help of Screen Wake Lock API.
+In [a case study](https://web.dev/betty-crocker/), they found out that the average session duration was 3.1 times longer than normal, the bounce rate reduced by 50%, and purchase intent indicators increased by about 300 percent.
+The interface therefore has a directly measurable effect on the success of the website or application, repectively.
+The Screen Wake Lock API shipped with Google Chrome 84 in July 2020.
+The HTTP Archive only has data for April, May, August and September.
+After the release of Chrome 84, usage data quickly rose to 0.00011 percent on desktop and 0.00009 percent on mobile.
 
 ## Idle Detection API
 
@@ -212,9 +242,10 @@ A `threshold` defining the time in milliseconds that the user has to be idle.
 The minimum threshold is 60,000 milliseconds (one minute).
 Optionally, you can pass an AbortSignal to the `abort` property, which you can use to abort idle detection later on.
 
-(TODO: analyze data) https://chromestatus.com/metrics/feature/timeline/popularity/2834 OK
+(IMAGE: Idle Detection API)
 
 At the time of this writing, the Idle Detection API is under origin trial, so its API shape may change in the future.
+For the same reason, its usage is very low and hardly measurable.
 
 ## Periodic Background Sync API
 
@@ -254,14 +285,15 @@ self.addEventListener('periodicsync', (event) => {
 });
 ```
 
-(TODO: analyze data) https://chromestatus.com/metrics/feature/timeline/popularity/2931 OK
-
 At the time of this writing, only Chromium-based browsers implement this API.
 On these browsers, the application has to be installed (i.e., added to the homescreen) first, before the API can be used.
 The site engagement score of the website defines if and how often periodic sync events can be invoked.
 In the best case, websites can sync content once a day.
 
-TODO: Too long?
+(IMAGE: Periodic Sync API)
+
+The use of the interface is currently very low.
+Apart from two outliers, the use on mobile and desktop websites is very close together.
 
 ## Integration with native app stores
 
@@ -282,7 +314,12 @@ relatedApps.forEach((app) => {
 });
 ```
 
-(TODO: Analyze data) OK
+(IMAGE: gIRA)
+
+Over the course of 2020, the `getInstalledRelatedApps()` API shows an exponential growth on mobile websites.
+In September, 0.005 percent of mobile websites tracked by the HTTP Archive made use of this API.
+On the desktop, the API does not grow quite as fast, but still strictly monotonous.
+This could also be due to Android stores providing significantly more apps than the Microsoft Store does for Windows.
 
 ## Content Indexing API
 
@@ -300,7 +337,11 @@ Each piece of content must have an ID, a URL, a launch URL, title, description a
 Optionally, the content can be grouped into different categories, such as articles, homepages, or videos.
 The `delete()` method allows you to remove content from the index again, and the `getAll()` method returns a list of all indexed entries.
 
-(TODO: Analyze data) https://chromestatus.com/metrics/feature/timeline/popularity/2983 OK
+(IMAGE: Content Indexing API :: Add)
+
+The Content Indexing API launched with Chrome 84 in July 2020.
+Directly after shipping, the API was used during approximately 0.0002 percent of page loads in Chrome.
+In October 2020, this value has quadrupled.
 
 ## New Transport APIs
 
@@ -324,7 +365,10 @@ const writer = writable.getWriter();
 
 The WebSocketStream API transparently solves backpressure for you, as the stream readers and writers will only proceed if its safe to do so.
 
-(TODO: Analyze) https://chromestatus.com/metrics/feature/timeline/popularity/3018 OK
+(IMAGE: WEb Socket Streams)
+
+The WebSocketStream API has completed its first origin trial and is now back in the experimentation phase again.
+This also explains why the usage of this API currently is so low that it's hardly measurable. 
 
 ### Make it QUIC
 
@@ -344,22 +388,20 @@ const stream = await transport.createSendStream();
 QuicTransport is a great alternative to WebSockets, as it supports the use cases from the WebSocket API, and adds support for scenarios where minimal latency is more important than reliability and message order.
 This makes it a great choice for games and applications dealing with high-frequency events.
 
-(TODO: Analyze) https://chromestatus.com/metrics/feature/timeline/popularity/3184 OK
+(IMAGE: QUIC)
+
+The use of the interface is currently still so low that it is hardly measurable.
 
 ## Conclusion
 
-The state of web capabilities 2020 is… (TODO)
-
-The File System and Async Clipboard API allow a whole now application category, productivity apps, to finally make the shift to the web.
-
+The state of web capabilities 2020 is healthy, as new powerful APIs regularly ship with new releases of Chromium-based browsers.
+Some interfaces like the Content Indexing API or Idle Detection API help to add finishing touches to certain web applications.
+Other APIs, such as the File System Access and Async Clipboard API, allow a whole now application category, productivity apps, to finally make the shift to the web.
 Some APIs such as Async Clipboard and Web Share API have already made their way into other, non-Chromium browsers.
 Safari even was the first mobile browser to implement Web Share API.
 
-The first Fugu APIs that there is data for show a hockey stick shape, representing …
-
-
-
-
-- security
-- privacy
-- developer interaction
+In doing so, the Fugu team ensures that access to these functions takes place in a secure and data privacy friendly manner.
+Also, the Fugu team is listening to the feedback from other browser vendors and web developers.
+While the usage of those new APIs is comparatively low, some APIs presented in this chapter show an exponential or even hockey stick-like growth, such as the Badging or Content Indexing API.
+So it also depends on you as web developers what the state of web capabilities in 2021 will look like:
+Build great web applications, make use of the powerful APIs in a backwards-compatible manner and help make the web a more capable platform.
